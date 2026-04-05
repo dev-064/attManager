@@ -36,6 +36,17 @@ export async function getAttendance(workerId: string, month: string): Promise<At
   return (data ?? []) as Attendance[];
 }
 
+export async function getAllAttendanceForMonth(month: string): Promise<Attendance[]> {
+  const { data, error } = await supabase
+    .from("attendance")
+    .select("*")
+    .gte("date", `${month}-01`)
+    .lte("date", `${month}-31`)
+    .order("date", { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Attendance[];
+}
+
 export async function getMonthlySalary(
   workerId: string,
   month: string
