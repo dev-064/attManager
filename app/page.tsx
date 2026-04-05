@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import StatCard from "@/components/StatCard";
 import PageHeader from "@/components/PageHeader";

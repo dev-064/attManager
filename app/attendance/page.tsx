@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import PageHeader from "@/components/PageHeader";
 import { getWorkers } from "@/lib/data";
 import AttendanceForm from "./AttendanceForm";

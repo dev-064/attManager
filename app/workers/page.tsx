@@ -1,7 +1,10 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { getWorkers } from "@/lib/data";
 import AddWorkerButton from "./AddWorkerButton";
+import DeleteWorkerButton from "./DeleteWorkerButton";
 
 export default async function WorkersPage() {
   const workers = await getWorkers().catch(() => []);
@@ -51,7 +54,7 @@ export default async function WorkersPage() {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--color-border)", background: "#FAF5FF" }}>
-                  {["Name", "Pay Type", "Rate", "Overtime / hr", "Joined", ""].map((h) => (
+                  {["Name", "Pay Type", "Rate", "Overtime / hr", "Joined", "", ""].map((h) => (
                     <th
                       key={h}
                       style={{
@@ -151,6 +154,9 @@ export default async function WorkersPage() {
                           <polyline points="12 5 19 12 12 19" />
                         </svg>
                       </Link>
+                    </td>
+                    <td style={{ padding: "16px 12px" }}>
+                      <DeleteWorkerButton workerId={w.id} workerName={w.name} />
                     </td>
                   </tr>
                 ))}

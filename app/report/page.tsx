@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import PageHeader from "@/components/PageHeader";
 import { getWorkers, getAttendance } from "@/lib/data";
 import MonthPicker from "./MonthPicker";
