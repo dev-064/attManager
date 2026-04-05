@@ -1,38 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
-import { Worker, Attendance, SalaryReport } from "@/types";
+import { getWorker, getAttendance, getMonthlySalary } from "@/lib/data";
 import WorkerDetailClient from "./WorkerDetailClient";
-
-async function getWorker(id: string): Promise<Worker | null> {
-  try {
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
-    const res = await fetch(`${base}/api/workers/${id}`, { cache: "no-store" });
-    if (res.status === 404) return null;
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
-
-async function getAttendanceAndSalary(
-  workerId: string,
-  month: string
-): Promise<{ records: Attendance[]; salary: SalaryReport | null }> {
-  try {
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
-    const [attRes, salRes] = await Promise.all([
-      fetch(`${base}/api/attendance?workerId=${workerId}&month=${month}`, { cache: "no-store" }),
-      fetch(`${base}/api/salary/${workerId}?month=${month}`, { cache: "no-store" }),
-    ]);
-    const records: Attendance[] = attRes.ok ? await attRes.json() : [];
-    const salary: SalaryReport | null = salRes.ok ? await salRes.json() : null;
-    return { records, salary };
-  } catch {
-    return { records: [], salary: null };
-  }
-}
 
 export default async function WorkerDetailPage({
   params,
@@ -47,12 +17,13 @@ export default async function WorkerDetailPage({
   const today = new Date();
   const month = monthParam ?? `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
 
-  const [worker, { records, salary }] = await Promise.all([
-    getWorker(id),
-    getAttendanceAndSalary(id, month),
-  ]);
-
+  const worker = await getWorker(id).catch(() => null);
   if (!worker) notFound();
+
+  const [records, salary] = await Promise.all([
+    getAttendance(id, month).catch(() => []),
+    getMonthlySalary(id, month).catch(() => null),
+  ]);
 
   const [year, mon] = month.split("-").map(Number);
   const monthLabel = new Date(year, mon - 1).toLocaleDateString("en-IN", { month: "long", year: "numeric" });

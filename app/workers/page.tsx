@@ -1,21 +1,10 @@
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
-import { Worker } from "@/types";
+import { getWorkers } from "@/lib/data";
 import AddWorkerButton from "./AddWorkerButton";
 
-async function getWorkers(): Promise<Worker[]> {
-  try {
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
-    const res = await fetch(`${base}/api/workers`, { cache: "no-store" });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
-
 export default async function WorkersPage() {
-  const workers = await getWorkers();
+  const workers = await getWorkers().catch(() => []);
 
   return (
     <div>

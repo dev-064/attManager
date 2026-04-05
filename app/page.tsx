@@ -1,21 +1,10 @@
 import Link from "next/link";
 import StatCard from "@/components/StatCard";
 import PageHeader from "@/components/PageHeader";
-import { Worker } from "@/types";
-
-async function getDashboardData() {
-  try {
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
-    const res = await fetch(`${base}/api/workers`, { cache: "no-store" });
-    const workers: Worker[] = res.ok ? await res.json() : [];
-    return { workers };
-  } catch {
-    return { workers: [] };
-  }
-}
+import { getWorkers } from "@/lib/data";
 
 export default async function DashboardPage() {
-  const { workers } = await getDashboardData();
+  const workers = await getWorkers().catch(() => []);
 
   const dailyWageCount = workers.filter((w) => w.daily_wage != null).length;
   const monthlySalaryCount = workers.filter((w) => w.monthly_salary != null).length;
@@ -126,7 +115,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Recent workers */}
+      {/* Workers table */}
       {workers.length > 0 && (
         <div style={{ animation: "fadeIn var(--transition-md) ease both", animationDelay: "100ms" }}>
           <h2 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--color-text)", marginBottom: "16px" }}>
