@@ -47,9 +47,11 @@ export async function GET(req: NextRequest) {
     if (!/^\d{4}-\d{2}$/.test(month)) {
       return NextResponse.json({ error: "month must be YYYY-MM" }, { status: 400 });
     }
+    const [y, m] = month.split("-").map(Number);
+    const lastDay = new Date(y, m, 0).getDate();
     query = query
       .gte("date", `${month}-01`)
-      .lte("date", `${month}-31`);
+      .lte("date", `${month}-${String(lastDay).padStart(2, "0")}`);
   }
 
   const { data, error } = await query;

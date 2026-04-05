@@ -33,7 +33,7 @@ export async function GET(
     .select("*")
     .eq("worker_id", workerId)
     .gte("date", `${month}-01`)
-    .lte("date", `${month}-31`)
+    .lte("date", (() => { const [y, m] = month.split("-").map(Number); return `${month}-${String(new Date(y, m, 0).getDate()).padStart(2, "0")}`; })())
     .order("date", { ascending: true });
 
   if (attError) return NextResponse.json({ error: attError.message }, { status: 500 });
